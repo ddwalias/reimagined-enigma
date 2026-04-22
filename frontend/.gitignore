@@ -1,0 +1,17 @@
+# dependencies
+/node_modules
+
+# vite
+/dist
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files
+.env*
+
+# typescript
+*.tsbuildinfo
