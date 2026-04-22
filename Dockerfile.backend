@@ -21,4 +21,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 
-CMD ["gunicorn", "--chdir", "/app/backend", "--workers", "2", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "--config", "/app/backend/gunicorn.conf.py", "app:app"]

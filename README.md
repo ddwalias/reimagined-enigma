@@ -118,12 +118,6 @@ docker compose up --build
 
 The backend and scraper share a named Docker volume mounted at `/var/lib/optibot`, which stores `state.db`, `last_run.json`, and the normalized Markdown files. The scraper service uses `Dockerfile.scraper`, which installs `cron` and schedules `python scraper/main.py` with `SCRAPER_CRON_SCHEDULE`. The default schedule is `0 3 * * *`.
 
-## CLI
-
-```bash
-python scraper/ask_bot.py "How do I add a YouTube video?"
-```
-
 ## Sync strategy
 
 The scraper calls Zendesk Help Center articles, converts each article body to clean Markdown, writes `data/markdown/<slug>.md`, and includes an `Article URL:` line for citations. SQLite keeps the local manifest for `article_id`, `slug`, `article_url`, `content_hash`, `last_seen_at`, `gemini_document_name`, and `gemini_file_search_store_name`. On the next run, unchanged hashes are skipped; changed articles upload a replacement Gemini document and delete the old one. Logs include `added`, `updated`, and `skipped`.
