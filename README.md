@@ -1,3 +1,5 @@
+Live site: https://optibot.duydanghoang.dev/
+
 ![Chat interface](docs/chat-demo.svg)
 
 ## Repo layout
