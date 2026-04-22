@@ -1,6 +1,4 @@
-# pebble-river
-
-OptiBot mini-clone for the take-home: scrape public OptiSigns support articles, normalize them to Markdown, upload changed docs into a Gemini File Search store, and expose a Flask JSON API plus a Vite React chat UI.
+![Chat interface](docs/chat-demo.svg)
 
 ## Repo layout
 
@@ -9,8 +7,6 @@ frontend/   Vite React chat client
 backend/    Flask API app and Gemini chat code
 scraper/    scraper, sync job, and CLI
 ```
-
-The backend and scraper are intentionally separated now. There is no shared `optibot` package anymore.
 
 ## Setup
 
@@ -29,8 +25,6 @@ The root `.env` keeps the required secret plus the settings that commonly vary b
 - `STATE_DB_PATH`, `RUN_ARTIFACT`, and `OUT_DIR` are optional path overrides for different local/container layouts.
 - `VITE_DEV_PROXY_TARGET` is optional for local frontend hot-reload dev and defaults to `http://127.0.0.1:8000`.
 - `FLASK_HOST`, `FLASK_PORT`, `CORS_ALLOW_ORIGIN`, and `FRONTEND_DIST_DIR` are optional backend deployment overrides.
-
-Everything else is fixed in code for this take-home: the scraper stays pointed at the OptiSigns Zendesk help center, the store display name remains `optibot-docs`, and Gemini indexing still uses the built-in polling/timeout values from code.
 
 ## Sync the docs
 
@@ -121,9 +115,3 @@ The backend and scraper share a named Docker volume mounted at `/var/lib/optibot
 ## Sync strategy
 
 The scraper calls Zendesk Help Center articles, converts each article body to clean Markdown, writes `data/markdown/<slug>.md`, and includes an `Article URL:` line for citations. SQLite keeps the local manifest for `article_id`, `slug`, `article_url`, `content_hash`, `last_seen_at`, `gemini_document_name`, and `gemini_file_search_store_name`. On the next run, unchanged hashes are skipped; changed articles upload a replacement Gemini document and delete the old one. Logs include `added`, `updated`, and `skipped`.
-
-## Indexing
-
-Gemini File Search now uses the service defaults for chunking. The scraper does not send a custom `chunking_config`.
-
-Long-running Gemini indexing operations are polled every `5` seconds with a `1800` second timeout.
