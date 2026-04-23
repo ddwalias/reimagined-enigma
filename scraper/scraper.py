@@ -50,6 +50,16 @@ def normalize_links(soup: BeautifulSoup, base_url: str) -> None:
         tag[attr] = urljoin(base_url, value)
 
 
+def remove_inline_data_images(soup: BeautifulSoup) -> int:
+    removed = 0
+    for tag in soup.find_all("img"):
+        src = tag.get("src")
+        if isinstance(src, str) and src.startswith("data:"):
+            tag.decompose()
+            removed += 1
+    return removed
+
+
 def html_to_markdown(article: dict[str, Any]) -> str:
     title = (article.get("title") or "Untitled").strip()
     url = article.get("html_url") or article.get("url") or HELP_CENTER_HOST
@@ -59,6 +69,14 @@ def html_to_markdown(article: dict[str, Any]) -> str:
     soup = BeautifulSoup(body_html, "html.parser")
     for tag in soup(["script", "style", "noscript", "iframe"]):
         tag.decompose()
+    removed_inline_images = remove_inline_data_images(soup)
+    if removed_inline_images:
+        log(
+            "removed_inline_data_images",
+            article_id=str(article.get("id")),
+            title=title,
+            count=removed_inline_images,
+        )
     normalize_links(soup, url)
 
     body_md = md(
